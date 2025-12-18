@@ -36,6 +36,457 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
+            display: flex;
+            min-height: 100dvh;
+            padding: 20px;
+        }
+
+        .calculator-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 480px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin: auto;
+            transform: translateZ(0);
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; }
+
+        .content { padding: 24px; }
+
+        /* Input Groups */
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        
+        .currency-input {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .currency-input span {
+            position: absolute;
+            left: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .currency-input input {
+            width: 100%;
+            padding: 12px 12px 12px 30px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            outline: none;
+            background: #fff;
+            -moz-appearance: textfield;
+        }
+        
+        .currency-input input::-webkit-outer-spin-button,
+        .currency-input input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .currency-input input:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1); 
+        }
+
+        /* Toggles */
+        .toggles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 0.875rem;
+            user-select: none;
+            font-weight: 500;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Results Section */
+        .results { display: flex; flex-direction: column; gap: 12px; }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            align-items: center;
+        }
+        
+        .result-row.collapsible {
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+        }
+        
+        .result-row.collapsible.visible {
+            max-height: 40px;
+            opacity: 1;
+        }
+        
+        .result-row.total-fees {
+            border-top: 1px dashed var(--border);
+            padding-top: 12px;
+            margin-top: 4px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .final-profit {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .final-profit h2 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .profit-amount { font-size: 2.25rem; font-weight: 800; color: var(--text-main); line-height: 1.1; }
+        .profit-margin { 
+            font-size: 0.875rem; 
+            font-weight: 600; 
+            margin-top: 8px; 
+            display: inline-flex; 
+            align-items: center;
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            transition: all 0.3s ease;
+        }
+
+        /* Dynamic States */
+        .low-margin .profit-amount { color: var(--danger); }
+        .low-margin .profit-margin { background-color: var(--danger-bg); color: var(--danger); }
+        .low-margin { border-color: rgba(239, 68, 68, 0.2); background-color: #fff5f5; }
+
+        .healthy-margin .profit-amount { color: var(--success); }
+        .healthy-margin .profit-margin { background-color: var(--success-bg); color: var(--success); }
+        .healthy-margin { border-color: rgba(16, 185, 129, 0.2); background-color: #f0fdf4; }
+
+        /* Footer & Donation */
+        .footer-section {
+            text-align: center;
+            margin-top: 24px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .disclaimer { font-size: 0.75rem; color: #9ca3af; margin-bottom: 16px; line-height: 1.4; }
+
+        .bmc-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #FFDD00;
+            color: #000000;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .bmc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .bmc-button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <div class="header">
+        <h1>Etsy Fee & Profit Calculator</h1>
+    </div>
+    
+    <div class="content">
+        <!-- Inputs -->
+        <div class="input-group">
+            <label for="salePrice">Sale Price</label>
+            <div class="currency-input">
+                <span>$</span>
+                <input type="number" id="salePrice" placeholder="0.00" step="0.01" min="0" inputmode="decimal">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="shipPrice">Shipping Charge</label>
+            <div class="currency-input">
+                <span>$</span>
+                <input type="number" id="shipPrice" placeholder="0.00" step="0.01" min="0" inputmode="decimal">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="costPrice">Item Cost (Materials/Labor)</label>
+            <div class="currency-input">
+                <span>$</span>
+                <input type="number" id="costPrice" placeholder="0.00" step="0.01" min="0" inputmode="decimal">
+            </div>
+        </div>
+
+        <!-- Toggles -->
+        <div class="toggles">
+            <label class="toggle-label">
+                <span>Offsite Ads (15%)</span>
+                <div class="switch">
+                    <input type="checkbox" id="adsToggle">
+                    <span class="slider"></span>
+                </div>
+            </label>
+
+            <label class="toggle-label">
+                <span>Etsy Plus</span>
+                <div class="switch">
+                    <input type="checkbox" id="plusToggle">
+                    <span class="slider"></span>
+                </div>
+            </label>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="results">
+            <div class="result-row">
+                <span>Transaction Fee (6.5%)</span>
+                <span id="transFeeDisplay">$0.00</span>
+            </div>
+            <div class="result-row">
+                <span>Processing Fee (3% + $0.25)</span>
+                <span id="procFeeDisplay">$0.00</span>
+            </div>
+            
+            <div class="result-row collapsible" id="adsRow">
+                <span>Offsite Ads Fee (15%)</span>
+                <span id="adsFeeDisplay">$0.00</span>
+            </div>
+            
+            <div class="result-row">
+                <span>Listing Fee <small>(Standard)</small></span>
+                <span id="listFeeDisplay">$0.20</span>
+            </div>
+            <div class="result-row total-fees">
+                <span>Total Fees & Costs</span>
+                <span id="totalDeductionDisplay">$0.00</span>
+            </div>
+        </div>
+
+        <!-- Final Output -->
+        <div class="final-profit" id="profitBox">
+            <h2>Final Net Profit</h2>
+            <div class="profit-amount" id="netProfitDisplay">$0.00</div>
+            <div class="profit-margin" id="marginDisplay">0.00% Margin</div>
+        </div>
+        
+        <!-- Footer & Donation -->
+        <div class="footer-section">
+            <div class="disclaimer">
+                *Calculations based on standard US fees (2025).<br>Etsy Plus waives listing fee.
+            </div>
+            <a href="https://buymeacoffee.com/Hyperb0lic" target="_blank" rel="noopener noreferrer" class="bmc-button">
+                ☕ Buy me a coffee
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    /**
+     * THE TRI-PHASIC LOGIC CORE v2.1
+     * Updates: Added footer with donation link integration.
+     */
+
+    // DOM Elements
+    const inputs = {
+        sale: document.getElementById('salePrice'),
+        ship: document.getElementById('shipPrice'),
+        cost: document.getElementById('costPrice'),
+        ads: document.getElementById('adsToggle'),
+        plus: document.getElementById('plusToggle')
+    };
+
+    const displays = {
+        trans: document.getElementById('transFeeDisplay'),
+        proc: document.getElementById('procFeeDisplay'),
+        ads: document.getElementById('adsFeeDisplay'),
+        adsRow: document.getElementById('adsRow'),
+        list: document.getElementById('listFeeDisplay'),
+        total: document.getElementById('totalDeductionDisplay'),
+        net: document.getElementById('netProfitDisplay'),
+        margin: document.getElementById('marginDisplay'),
+        box: document.getElementById('profitBox')
+    };
+
+    // Constants (US 2025)
+    const RATES = {
+        TRANS: 0.065,
+        PROC_PCT: 0.03,
+        PROC_FLAT: 0.25,
+        ADS: 0.15,
+        LISTING: 0.20
+    };
+
+    function calculate() {
+        // 1. Parse Inputs
+        const sale = parseFloat(inputs.sale.value) || 0;
+        const ship = parseFloat(inputs.ship.value) || 0;
+        const cost = parseFloat(inputs.cost.value) || 0;
+        const useAds = inputs.ads.checked;
+        const usePlus = inputs.plus.checked;
+
+        // 2. Revenue Base
+        const revenue = sale + ship;
+
+        // 3. Calculate Fees
+        const transFee = revenue * RATES.TRANS;
+        const procFee = (revenue * RATES.PROC_PCT) + RATES.PROC_FLAT;
+        const adsFee = useAds ? (revenue * RATES.ADS) : 0;
+        const listFee = usePlus ? 0 : RATES.LISTING;
+
+        // 4. Totals
+        let totalFees = 0;
+        if (revenue > 0 || inputs.sale.value !== '') {
+            totalFees = transFee + procFee + adsFee + listFee;
+        } else if (inputs.sale.value === '' && inputs.ship.value === '') {
+            totalFees = 0; 
+        } else {
+            totalFees = listFee; 
+        }
+
+        const totalDeductions = totalFees + cost;
+        const netProfit = revenue - totalDeductions;
+        
+        let margin = 0;
+        if (revenue > 0) {
+            margin = (netProfit / revenue) * 100;
+        }
+
+        // 5. Update UI
+        displays.trans.textContent = formatMoney(revenue > 0 ? transFee : 0);
+        displays.proc.textContent = formatMoney(revenue > 0 ? procFee : 0);
+        
+        // Handle Ads Row Animation
+        if (useAds) {
+            displays.adsRow.classList.add('visible');
+            displays.ads.textContent = formatMoney(adsFee);
+        } else {
+            displays.adsRow.classList.remove('visible');
+        }
+
+        // Handle Listing Fee Display
+        displays.list.textContent = formatMoney(listFee);
+        if (usePlus) {
+            displays.list.innerHTML = `<span style="text-decoration: line-through; opacity: 0.5;">$0.20</span> <span style="color:var(--success); font-weight:bold;">Free</span>`;
+        }
+
+        displays.total.textContent = formatMoney(totalDeductions);
+        displays.net.textContent = formatMoney(netProfit);
+        displays.margin.textContent = `${margin.toFixed(2)}% Margin`;
+
+        // 6. Conditional Formatting
+        displays.box.className = 'final-profit'; // Reset
+        if (revenue > 0) {
+            if (margin < 20) {
+                displays.box.classList.add('low-margin');
+            } else {
+                displays.box.classList.add('healthy-margin');
+            }
+        }
+    }
+
+    function formatMoney(amount) {
+        return '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Event Listeners
+    Object.values(inputs).forEach(input => {
+        input.addEventListener('input', calculate);
+        input.addEventListener('change', calculate);
+    });
+
+    // Initial Run
+    calculate();
+
+</script>
+</body>
+</html>            background-color: var(--bg-color);
+            color: var(--text-main);
             /* Flex layout with margin:auto on child ensures safe centering without scroll clipping */
             display: flex;
             min-height: 100dvh; /* Dynamic viewport height for mobile responsiveness */
